@@ -69,9 +69,10 @@ class SiteCategory(Enum):
 class CyberFind:
     """Main class for CyberFind OSINT tool"""
 
-    def __init__(self, config_path: str = "config.yaml"):
+    def __init__(self, config_path: str = "config.yaml", no_color: bool = False):
         """Initialize CyberFind with configuration"""
         self.config = self.load_config(config_path)
+        self.no_color = no_color
         self.initialize_components()
 
     def load_config(self, config_path: str) -> Dict[str, Any]:
@@ -670,13 +671,21 @@ class CyberFind:
                 self.stats["found_accounts"] += 1
                 found_count += 1
                 # Show found accounts immediately
-                print(f"    ✓ Found: {result_dict['site']}")
+                self.print_colored(f"    ✅ Found: {result_dict['site']}", "green")
             elif result_dict.get("error"):
                 user_results["errors"].append(result_dict)
                 self.stats["errors"] += 1
                 error_count += 1
+                # Show errors immediately
+                error_msg = result_dict.get('error', 'Unknown error')
+                if 'rate' in error_msg.lower() or 'limit' in error_msg.lower():
+                    self.print_colored(f"    ⚠️  Rate-limited: {result_dict['site']}", "yellow")
+                else:
+                    self.print_colored(f"    ⚠️  Error: {result_dict['site']}", "yellow")
             else:
                 user_results["not_found"].append(result_dict)
+                # Show not found immediately (optional - can be commented out if too verbose)
+                # self.print_colored(f"    ❌ Not found: {result_dict['site']}", "red")
 
         print(f"  Done: {found_count} found, {error_count} errors")
 
@@ -1026,6 +1035,10 @@ class CyberFind:
 
     def print_colored(self, text: str, color: str = "white") -> None:
         """Print colored text"""
+        if self.no_color:
+            print(text)
+            return
+            
         try:
             import colorama
 
