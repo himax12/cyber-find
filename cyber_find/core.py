@@ -670,13 +670,13 @@ class CyberFind:
                 user_results["found"].append(result_dict)
                 self.stats["found_accounts"] += 1
                 found_count += 1
-                # Show found accounts immediately
+                # Show found accounts immediately with green color
                 self.print_colored(f"    ✅ Found: {result_dict['site']}", "green")
             elif result_dict.get("error"):
                 user_results["errors"].append(result_dict)
                 self.stats["errors"] += 1
                 error_count += 1
-                # Show errors immediately
+                # Show errors immediately with yellow color
                 error_msg = result_dict.get('error', 'Unknown error')
                 if 'rate' in error_msg.lower() or 'limit' in error_msg.lower():
                     self.print_colored(f"    ⚠️  Rate-limited: {result_dict['site']}", "yellow")
@@ -684,7 +684,7 @@ class CyberFind:
                     self.print_colored(f"    ⚠️  Error: {result_dict['site']}", "yellow")
             else:
                 user_results["not_found"].append(result_dict)
-                # Show not found immediately (optional - can be commented out if too verbose)
+                # Optionally show not found with red color (commented out to reduce verbosity)
                 # self.print_colored(f"    ❌ Not found: {result_dict['site']}", "red")
 
         print(f"  Done: {found_count} found, {error_count} errors")
@@ -1034,7 +1034,7 @@ class CyberFind:
             return FakeTqdm(total, desc, "item")
 
     def print_colored(self, text: str, color: str = "white") -> None:
-        """Print colored text"""
+        """Print colored text (respects no_color flag)"""
         if self.no_color:
             print(text)
             return
