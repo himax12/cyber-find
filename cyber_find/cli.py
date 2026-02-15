@@ -298,6 +298,7 @@ def print_colored_text(text: str, color: str, no_color: bool = False) -> None:
         return
     try:
         import colorama
+
         colors = {
             "red": colorama.Fore.RED,
             "green": colorama.Fore.GREEN,
@@ -323,7 +324,9 @@ def print_results(results, total_time, args):
         stats = results["statistics"]
         print("\n📊 STATISTICS:")
         print(f"  Total checks: {stats.get('total_checks', 0)}")
-        print_colored_text(f"  Accounts found: {stats.get('found_accounts', 0)}", "green", args.no_color)
+        print_colored_text(
+            f"  Accounts found: {stats.get('found_accounts', 0)}", "green", args.no_color
+        )
         print_colored_text(f"  Errors: {stats.get('errors', 0)}", "yellow", args.no_color)
 
     if "results" in results:
@@ -348,7 +351,9 @@ def print_results(results, total_time, args):
                     for i, account in enumerate(accounts, 1):
                         status_code = account.get("status_code", "N/A")
                         response_time = account.get("response_time", 0)
-                        print_colored_text(f"      {i:2d}. {account['site']}", "green", args.no_color)
+                        print_colored_text(
+                            f"      {i:2d}. {account['site']}", "green", args.no_color
+                        )
                         print(f"          URL: {account.get('url', 'N/A')}")
                         print(f"          Status: {status_code}, Time: {response_time:.2f}s")
             else:
