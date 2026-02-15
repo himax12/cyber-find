@@ -296,7 +296,6 @@ def print_colored_text(text: str, color: str, no_color: bool = False) -> None:
     if no_color:
         print(text)
         return
-    
     try:
         import colorama
         colors = {
