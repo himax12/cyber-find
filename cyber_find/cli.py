@@ -291,25 +291,18 @@ async def run_passive_search(args, cyberfind):
         raise
 
 
-def print_colored_text(text: str, color: str, no_color: bool = False) -> None:
-    """Helper function to print colored text"""
+    """Helper function to print colored text using CyberFind's color logic."""
+    # Preserve explicit no-color behavior here for robustness.
     if no_color:
         print(text)
         return
+
+    # Delegate to CyberFind.print_colored to avoid duplicating color logic.
     try:
-        import colorama
-        colors = {
-            "red": colorama.Fore.RED,
-            "green": colorama.Fore.GREEN,
-            "yellow": colorama.Fore.YELLOW,
-            "blue": colorama.Fore.BLUE,
-            "magenta": colorama.Fore.MAGENTA,
-            "cyan": colorama.Fore.CYAN,
-            "white": colorama.Fore.WHITE,
-            "reset": colorama.Fore.RESET,
-        }
-        print(f"{colors.get(color, colors['white'])}{text}{colors['reset']}")
-    except ImportError:
+        CyberFind.print_colored(text, color, no_color=no_color)
+    except Exception:
+        # Fallback: if CyberFind.print_colored is unavailable or has an
+        # unexpected signature, just print without colors.
         print(text)
 
 
@@ -361,9 +354,9 @@ def print_results(results, total_time, args):
                     print_colored_text(f"  ⚠️  Errors: {error_count}", "yellow", args.no_color)
                     for i, error in enumerate(data["errors"][:5], 1):  # First 5 errors
                         print_colored_text(
-                            f"      {i}. {error.get('site', 'Unknown')}: {error.get('error', 'Unknown')}", 
-                            "yellow", 
-                            args.no_color
+                            f"      {i}. {error.get('site', 'Unknown')}: {error.get('error', 'Unknown')}",
+                            "yellow",
+                            args.no_color,
                         )
                     if error_count > 5:
                         print(f"      ... and {error_count - 5} more errors")
